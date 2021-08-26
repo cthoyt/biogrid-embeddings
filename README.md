@@ -1,8 +1,7 @@
 # biogrid-node2vec
 
-This repository
-generates node2vec embeddings for physical molecular interactions in
- [BioGRID](https://thebiogrid.org/).
+This repository generates node2vec embeddings for physical molecular interactions in
+[BioGRID](https://thebiogrid.org/).
 
 ## 🚀 Usage
 
@@ -24,12 +23,12 @@ url = "https://github.com/cthoyt/biogrid-node2vec/raw/main/output/4.4.200/embedd
 df = pd.read_csv(url, sep="\t", skiprows=1)
 ```
 
-It skips a line since this TSV file uses the word2vec format, where the first line says
-the length and width of the file.
+The index uses [UniProt](https://bioregistry.io/uniprot) protein identifiers. It skips a line since
+this TSV file uses the word2vec format, where the first line says the length and width of the file.
 
 ## ⚖️ License
 
-Code in this repository is licensed under the MIT License. 
+Code in this repository is licensed under the MIT License.
 
 ## 🙏 Acknowledgements
 
