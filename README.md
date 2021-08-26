@@ -7,7 +7,7 @@ generates node2vec embeddings for physical molecular interactions in
 ## 🚀 Usage
 
 Installation of the requirements and running of the build script are handled with `tox`. The current
-version of Rhea is looked up with [`bioversions`](https://github.com/cthoyt/bioversions) so the
+version of BioGRID is looked up with [`bioversions`](https://github.com/cthoyt/bioversions) so the
 provenance of the data can be properly traced. Run with:
 
 ```shell
