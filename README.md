@@ -1,4 +1,4 @@
-# biogrid-node2vec
+# biogrid-embeddings
 
 This repository generates node2vec embeddings for physical molecular interactions in
 [BioGRID](https://thebiogrid.org/).
@@ -19,7 +19,7 @@ The embedding dataframe can be loaded from GitHub with:
 ```python
 import pandas as pd
 
-url = "https://github.com/cthoyt/biogrid-node2vec/raw/main/output/4.4.200/embeddings.tsv"
+url = "https://github.com/cthoyt/biogrid-embeddings/raw/main/output/4.4.200/embeddings.tsv"
 df = pd.read_csv(url, sep="\t", skiprows=1)
 ```
 
