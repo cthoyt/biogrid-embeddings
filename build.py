@@ -79,8 +79,7 @@ def main(force: bool):
     _, df = model.reduce_df()
     fig, ax = plt.subplots()
     sns.scatterplot(data=df, x=0, y=1, ax=ax)
-    fig.savefig(output.joinpath("scatter.svg"), dpi=300)
-    fig.savefig(output.joinpath("scatter.png"), dpi=300)
+    fig.savefig(output.joinpath("scatter.svg"))
 
 
 if __name__ == "__main__":
