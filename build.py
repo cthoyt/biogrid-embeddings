@@ -1,17 +1,19 @@
 import pathlib
-import pickle
 import zipfile
 
 import bioversions
 import click
+import matplotlib.pyplot as plt
 import networkx as nx
 import pystow
-from more_click import verbose_option
-from more_node2vec import fit_model, process_graph
+import seaborn as sns
+from more_click import force_option, verbose_option
 from tqdm import tqdm
 
+from more_node2vec import Model, echo, fit_model, process_graph
 
 HERE = pathlib.Path(__file__).parent.resolve()
+MODULE = pystow.module("bio", "biogrid")
 
 
 def _iter(file):
@@ -42,32 +44,43 @@ def _iter(file):
         yield a, b
 
 
+vocab_name = "vocab.tsv"
+vector_name = "embeddings.tsv"
+
+
 @click.command()
 @verbose_option
-def main():
+@force_option
+def main(force: bool):
     version = bioversions.get_version("biogrid")
-    module = pystow.module("bio", "biogrid", version)
-
-    url = (
-        f"https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
-        f"BIOGRID-{version}/BIOGRID-ALL-{version}.tab3.zip"
-    )
-
-    path = module.ensure(url=url)
-    with zipfile.ZipFile(path) as zip_file:
-        with zip_file.open(f"BIOGRID-ALL-{version}.tab3.txt") as file:
-            graph = nx.Graph(_iter(file))
-
-    giant = process_graph(graph)
-    model = fit_model(giant)
-
     output = HERE.joinpath("output", version)
     output.mkdir(exist_ok=True, parents=True)
-    model.save(output)
 
-    wv = model.wv
-    with output.joinpath("embeddings.pkl").open("wb") as file:
-        pickle.dump(dict(zip(wv.vocab, wv.vectors)), file)
+    if output.joinpath("embeddings.pkl").is_file() and not force:
+        echo("loading model")
+        model = Model.load(output, vocab_name=vocab_name, vector_name=vector_name)
+    else:
+        url = (
+            f"https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
+            f"BIOGRID-{version}/BIOGRID-ALL-{version}.tab3.zip"
+        )
+
+        path = MODULE.ensure(version, url=url)
+        with zipfile.ZipFile(path) as zip_file:
+            with zip_file.open(f"BIOGRID-ALL-{version}.tab3.txt") as file:
+                graph = nx.Graph(_iter(file))
+
+        processed_graph = process_graph(graph)
+        model = fit_model(processed_graph)
+        model.save(
+            output, vocab_name=vocab_name, vector_name=vector_name, save_dict=True
+        )
+
+    _, df = model.reduce_df()
+    fig, ax = plt.subplots()
+    sns.scatterplot(data=df, x=0, y=1, ax=ax)
+    fig.savefig(output.joinpath("scatter.svg"), dpi=300)
+    fig.savefig(output.joinpath("scatter.png"), dpi=300)
 
 
 if __name__ == "__main__":

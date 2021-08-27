@@ -26,6 +26,10 @@ df = pd.read_csv(url, sep="\t", skiprows=1, index_col=0, header=None)
 The index uses [UniProt](https://bioregistry.io/uniprot) protein identifiers. It skips a line since
 this TSV file uses the word2vec format, where the first line says the length and width of the file.
 
+Here's a scatter of the embeddings:
+
+![Scatter plot of embeddings](output/4.4.200/scatter.svg)
+
 ## ⚖️ License
 
 Code in this repository is licensed under the MIT License.
