@@ -50,7 +50,11 @@ def _iter(file):
 @verbose_option
 @force_option
 def main(force: bool):
+    """Generate network-based embeddings for each protein."""
+    # Get the current version of BioGRID using :mod:`bioversions`.
     version = bioversions.get_version("biogrid")
+
+    # Create a version-specific output directory
     output = HERE.joinpath("output", version)
     output.mkdir(exist_ok=True, parents=True)
 
