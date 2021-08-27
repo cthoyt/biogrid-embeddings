@@ -14,6 +14,8 @@ from more_node2vec import Model, echo, fit_model, process_graph
 
 HERE = pathlib.Path(__file__).parent.resolve()
 MODULE = pystow.module("bio", "biogrid")
+VOCAB_NAME = "vocab.tsv"
+VECTOR_NAME = "embeddings.tsv"
 
 
 def _iter(file):
@@ -44,10 +46,6 @@ def _iter(file):
         yield a, b
 
 
-vocab_name = "vocab.tsv"
-vector_name = "embeddings.tsv"
-
-
 @click.command()
 @verbose_option
 @force_option
@@ -58,7 +56,7 @@ def main(force: bool):
 
     if output.joinpath("embeddings.pkl").is_file() and not force:
         echo("loading model")
-        model = Model.load(output, vocab_name=vocab_name, vector_name=vector_name)
+        model = Model.load(output, vocab_name=VOCAB_NAME, vector_name=VECTOR_NAME)
     else:
         url = (
             f"https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/"
@@ -73,7 +71,7 @@ def main(force: bool):
         processed_graph = process_graph(graph)
         model = fit_model(processed_graph)
         model.save(
-            output, vocab_name=vocab_name, vector_name=vector_name, save_dict=True
+            output, vocab_name=VOCAB_NAME, vector_name=VECTOR_NAME, save_dict=True
         )
 
     _, df = model.reduce_df()
