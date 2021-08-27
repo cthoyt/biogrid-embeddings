@@ -1,7 +1,7 @@
 # biogrid-embeddings
 
-This repository generates node2vec embeddings for physical molecular interactions in
-[BioGRID](https://thebiogrid.org/).
+This repository generates node2vec embeddings for physical interactions between human proteins and
+complexes in [BioGRID](https://thebiogrid.org/).
 
 ## 🚀 Usage
 
@@ -20,7 +20,7 @@ The embedding dataframe can be loaded from GitHub with:
 import pandas as pd
 
 url = "https://github.com/cthoyt/biogrid-embeddings/raw/main/output/4.4.200/embeddings.tsv"
-df = pd.read_csv(url, sep="\t", skiprows=1)
+df = pd.read_csv(url, sep="\t", skiprows=1, index_col=0, header=None)
 ```
 
 The index uses [UniProt](https://bioregistry.io/uniprot) protein identifiers. It skips a line since
