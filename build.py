@@ -6,11 +6,9 @@ import click
 import matplotlib.pyplot as plt
 import networkx as nx
 import pystow
-import seaborn as sns
 from more_click import force_option, verbose_option
-from tqdm import tqdm
-
 from more_node2vec import Model, echo, fit_model, process_graph
+from tqdm import tqdm
 
 HERE = pathlib.Path(__file__).parent.resolve()
 MODULE = pystow.module("bio", "biogrid")
@@ -78,10 +76,10 @@ def main(force: bool):
             output, vocab_name=VOCAB_NAME, vector_name=VECTOR_NAME, save_dict=True
         )
 
-    _, df = model.reduce_df()
-    fig, ax = plt.subplots()
-    sns.scatterplot(data=df, x=0, y=1, ax=ax)
+    fig, _ = model.plot_pca()
+    fig.tight_layout()
     fig.savefig(output.joinpath("scatter.svg"))
+    plt.close(fig)
 
 
 if __name__ == "__main__":
