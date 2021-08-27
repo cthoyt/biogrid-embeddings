@@ -1,16 +1,15 @@
 import pathlib
+import pickle
 import zipfile
 
 import bioversions
 import click
-import humanize
 import networkx as nx
 import pystow
 from more_click import verbose_option
-from nodevectors import Node2Vec
+from more_node2vec import fit_model, process_graph
 from tqdm import tqdm
 
-from utils import echo, save_tabbed_word2vec_format
 
 HERE = pathlib.Path(__file__).parent.resolve()
 
@@ -59,49 +58,16 @@ def main():
         with zip_file.open(f"BIOGRID-ALL-{version}.tab3.txt") as file:
             graph = nx.Graph(_iter(file))
 
-    echo("Getting largest connected components")
-    nodes = sorted(nx.connected_components(graph), key=len, reverse=True)[0]
-    echo(f"Largest connected component has {humanize.intword(len(nodes))} " "nodes")
-    echo("Inducing subgraph")
-    giant = graph.subgraph(nodes)
-    echo("Copying subgraph")
-    giant = giant.copy()
-    echo(
-        "Done inducing subgraph. Has "
-        f"{humanize.intword(giant.number_of_nodes())} "
-        f"nodes and {humanize.intword(giant.number_of_edges())} edges"
-    )
-
-    node2vec = Node2Vec(
-        n_components=64,
-        return_weight=2.3,  # from SEffNet
-        neighbor_weight=1.9,  # from SEffNet
-        walklen=8,  # from SEffNet
-        epochs=8,  # from SEffNet
-        w2vparams={
-            "window": 4,  # from SEffNet
-            "negative": 5,  # default
-            "iter": 10,  # default
-            # default from gensim,
-            # see https://github.com/VHRanger/nodevectors/issues/34
-            "batch_words": 10000,
-        },
-        verbose=True,
-        keep_walks=False,
-    )
-
-    tqdm.write("fitting model")
-    node2vec.fit(giant)  # takes about 5-8 minutes
-    tqdm.write("fit model")
+    giant = process_graph(graph)
+    model = fit_model(giant)
 
     output = HERE.joinpath("output", version)
     output.mkdir(exist_ok=True, parents=True)
+    model.save(output)
 
-    save_tabbed_word2vec_format(
-        wv=node2vec.model.wv,
-        vectors_path=output.joinpath("embeddings.tsv"),
-        vocab_path=output.joinpath("vocab.tsv"),
-    )
+    wv = model.wv
+    with output.joinpath("embeddings.pkl").open("wb") as file:
+        pickle.dump(dict(zip(wv.vocab, wv.vectors)), file)
 
 
 if __name__ == "__main__":
