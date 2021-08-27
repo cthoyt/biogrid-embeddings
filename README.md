@@ -28,7 +28,7 @@ this TSV file uses the word2vec format, where the first line says the length and
 
 Here's a 2D PCA scatterplot of the embeddings:
 
-![Scatter plot of embeddings](output/4.4.200/scatter.svg)
+![Scatter plot of embeddings](output/4.4.200/scatter.png)
 
 ## ⚖️ License
 

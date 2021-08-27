@@ -79,6 +79,7 @@ def main(force: bool):
     fig, _ = model.plot_pca()
     fig.tight_layout()
     fig.savefig(output.joinpath("scatter.svg"))
+    fig.savefig(output.joinpath("scatter.png"), dpi=400)
     plt.close(fig)
 
 
